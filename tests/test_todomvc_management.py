@@ -1,9 +1,9 @@
-from selene import have
+from selene import have, by
 from selene.support.shared import browser
 from tests.contexts import AtTodoMvcTest
 
 
-class TestUserWorkflow(AtTodoMvcTest):
+class TestToDoMVCManagement(AtTodoMvcTest):
 
     def test_basic_todos_workflow(self):
         add('a', 'b', 'c')
@@ -23,16 +23,16 @@ class TestUserWorkflow(AtTodoMvcTest):
 
     def test_filtering(self):
         add('a', 'b', 'c')
-        assert_todos('a', 'b', 'c')
 
         toggle('a')
-        filter('Active')
+
+        filter_active()
         assert_todos('b', 'c')
 
-        filter('Completed')
+        filter_completed()
         assert_todos('a')
 
-        filter('All')
+        filter_all()
         assert_todos('a', 'b', 'c')
 
 
@@ -43,7 +43,7 @@ def todo(name: str):
     return todos.element_by(have.exact_text(name))
 
 
-def add(*names) -> None:
+def add(*names):
     for name in names:
         browser.element('#new-todo').type(name).press_enter()
 
@@ -61,21 +61,33 @@ def cancel_editing(name: str, new_name: str):
     return start_edit(name, new_name).press_escape()
 
 
-def delete(name: str) -> None:
+def delete(name: str):
     todo(name).hover().element('.destroy').click()
 
 
-def toggle(name: str) -> None:
+def toggle(name: str):
     todo(name).element('.toggle').click()
 
 
-def clear_completed() -> None:
+def clear_completed():
     browser.element('#clear-completed').click()
 
 
-def assert_todos(*names) -> None:
+def assert_todos(*names):
     todos.should(have.exact_texts(*names))
 
 
-def filter(name: str) -> None:
-    browser.all('#filters>li').element_by(have.exact_text(name)).click()
+def filtering(action: str):
+    browser.element(by.link_text(action)).click()
+
+
+def filter_active():
+    filtering('Active')
+
+
+def filter_completed():
+    filtering('Completed')
+
+
+def filter_all():
+    filtering('All')
