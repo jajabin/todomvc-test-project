@@ -1,9 +1,11 @@
+import time
+
 from selene import have, by
 from selene.support.shared import browser
 from tests.contexts import AtTodoMvcTest
 
 
-class TestToDoMVCManagement(AtTodoMvcTest):
+class TestTodoMVCManagement(AtTodoMvcTest):
 
     def test_basic_todos_workflow(self):
         add('a', 'b', 'c')
@@ -77,17 +79,14 @@ def assert_todos(*names):
     todos.should(have.exact_texts(*names))
 
 
-def filtering(action: str):
-    browser.element(by.link_text(action)).click()
-
-
 def filter_active():
-    filtering('Active')
+    browser.element('//*[@href="#/active"]').click()
 
 
 def filter_completed():
-    filtering('Completed')
+    browser.element('//*[@href="#/completed"]').click()
 
 
 def filter_all():
-    filtering('All')
+    browser.element('//*[@href="#/"]').click()
+
