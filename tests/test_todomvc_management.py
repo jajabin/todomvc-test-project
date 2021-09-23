@@ -1,6 +1,4 @@
-import time
-
-from selene import have, by
+from selene import have
 from selene.support.shared import browser
 from tests.contexts import AtTodoMvcTest
 
