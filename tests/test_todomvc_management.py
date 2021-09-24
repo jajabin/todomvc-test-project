@@ -1,11 +1,12 @@
 from selene import have
 from selene.support.shared import browser
-from tests.contexts import AtTodoMvcTest
 
 
-class TestTodoMVCManagement(AtTodoMvcTest):
+class TestTodoMVCManagement:
 
     def test_basic_todos_workflow(self):
+        open_app()
+
         add('a', 'b', 'c')
         assert_todos('a', 'b', 'c')
 
@@ -22,6 +23,8 @@ class TestTodoMVCManagement(AtTodoMvcTest):
         assert_todos('c')
 
     def test_filtering(self):
+        open_app()
+
         add('a', 'b', 'c')
 
         toggle('a')
@@ -34,6 +37,20 @@ class TestTodoMVCManagement(AtTodoMvcTest):
 
         filter_all()
         assert_todos('a', 'b', 'c')
+
+
+def open_app():
+    already_tested = browser.matching(have.url_containing(browser.config.base_url))
+
+    if already_tested:
+        browser.clear_local_storage()
+
+    browser.open('#/')
+    browser.should(have.js_returned(
+        True,
+        'return Object.keys(require.s.contexts._.defined).length === 39'))
+
+    yield
 
 
 todos = browser.all('#todo-list>li')
