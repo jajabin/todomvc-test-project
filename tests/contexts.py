@@ -6,10 +6,10 @@ from selene.support.shared import browser
 class AtTodoMvcTest:
 
     @pytest.fixture(scope='function', autouse=True)
-    def open_app(self):
-        already_tested = browser.matching(have.url_containing(browser.config.base_url))
+    def open_clean_app(self):
+        already_opened = browser.matching(have.url_containing(browser.config.base_url))
 
-        if already_tested:
+        if already_opened:
             browser.clear_local_storage()
 
         browser.open('#/')
