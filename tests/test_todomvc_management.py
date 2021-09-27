@@ -93,13 +93,13 @@ def assert_todos(*names):
 
 
 def filter_active():
-    browser.element('//*[@href="#/active"]').click()
+    browser.element('[href="#/active"]').click()
 
 
 def filter_completed():
-    browser.element('//*[@href="#/completed"]').click()
+    browser.element('[href="#/completed"]').click()
 
 
 def filter_all():
-    browser.element('//*[@href="#/"]').click()
+    browser.element('[href="#/"]').click()
 
