@@ -138,7 +138,7 @@ def filter_completed():
 
 
 def filter_all():
-    browser.element('[href="#/all"]').click()
+    browser.element('[href="#/"]').click()
 
 
 def assert_todos(*names):
