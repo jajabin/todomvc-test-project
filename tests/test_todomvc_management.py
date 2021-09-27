@@ -1,4 +1,4 @@
-from selene import have
+from selene import have, be
 from selene.support.shared import browser
 from tests.contexts import AtTodoMvcTest
 
@@ -6,13 +6,18 @@ from tests.contexts import AtTodoMvcTest
 class TestTodoMVCManagement(AtTodoMvcTest):
 
     def test_add(self):
-        add('a')
-        assert_todos('a')
+        add('a', 'b')
+        assert_todos('a', 'b')
 
     def test_edit(self):
         add('a', 'b')
         edit('a', 'a edited')
         assert_todos('a edited', 'b')
+
+    def test_cancel_edit(self):
+        add('a', 'b')
+        cancel_editing('a', 'a edited')
+        assert_todos('a', 'b')
 
     def test_delete(self):
         add('a', 'b')
@@ -20,41 +25,44 @@ class TestTodoMVCManagement(AtTodoMvcTest):
         assert_todos('b')
 
     def test_complete(self):
-        add('a')
+        add('a', 'b')
         toggle('a')
-        assert_todos_completed()
+        assert_todos_completed('a')
 
     def test_uncomplete(self):
         add('a', 'b')
         toggle('a')
         toggle('a')
-        assert_todos_completed()
+        assert_todos_completed('')
 
     def test_complete_all(self):
         add('a', 'b')
         toggle_all()
-        assert_todos_completed()
+        assert_todos_completed('a', 'b')
 
     def test_uncomplete_all(self):
         add('a', 'b')
         toggle_all()
         toggle_all()
-        assert_todos_completed()
+        assert_todos_completed('')
 
     def test_number_left(self):
         add('a', 'b')
         toggle('a')
-        assert_todos_left()
-
-    def test_is_clear_completed_visible(self):
-        add('a', 'b')
-        assert_is_clear_completed_visible()
+        assert_todos_left('1')
 
     def test_clear_completed(self):
         add('a', 'b')
         toggle('a')
         clear_completed()
         assert_todos('b')
+
+    def test_no_footer(self):
+        assert_no_footer()
+
+    def test_no_clear_completed(self):
+        add('a', 'b')
+        assert_no_clear_completed()
 
     def test_basic_todos_workflow(self):
         add('a', 'b', 'c')
@@ -85,7 +93,6 @@ class TestTodoMVCManagement(AtTodoMvcTest):
 
         filter_all()
         assert_todos('a', 'b', 'c')
-
 
 
 todos = browser.all('#todo-list>li')
@@ -145,13 +152,18 @@ def assert_todos(*names):
     todos.should(have.exact_texts(*names))
 
 
-def assert_todos_completed():
-    pass
+def assert_todos_completed(*names):
+    for name in names:
+        todos.element_by(have.exact_texts(name)).element('.completed')
 
 
-def assert_todos_left():
-    pass
+def assert_todos_left(count):
+    browser.element('#todo-count>strong').should(have.exact_text(count))
 
 
-def assert_is_clear_completed_visible():
-    pass
+def assert_no_footer():
+    browser.element('#footer').should(be.hidden)
+
+
+def assert_no_clear_completed():
+    browser.element('#clear-completed').should(be.hidden)
